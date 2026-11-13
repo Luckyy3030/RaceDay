@@ -1,0 +1,39 @@
+:root {
+    --raceday-dark: #101b2d;
+    --raceday-blue: #1769aa;
+    --raceday-orange: #ff7a00;
+    --raceday-light: #f4f7fb;
+}
+
+body {
+    background: var(--raceday-light);
+    font-family: Arial, sans-serif;
+}
+
+.navbar {
+    background: var(--raceday-dark) !important;
+}
+
+.navbar-brand {
+    color: white !important;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background: var(--raceday-blue);
+    border-color: var(--raceday-blue);
+}
+
+    .btn-primary:hover {
+        background: var(--raceday-dark);
+    }
+
+.card {
+    border: none;
+    border-radius: 12px;
+}
+
+h1, h2, h3 {
+    font-weight: 700;
+    color: var(--raceday-dark);
+}

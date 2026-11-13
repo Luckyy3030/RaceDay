@@ -1,0 +1,86 @@
+﻿@model System.Text.Json.JsonElement
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="container mt-4">
+
+    <h2>My Profile</h2>
+    <hr />
+
+    @if (TempData["ProfileMessage"] != null)
+    {
+        <div class="alert alert-info">
+            @TempData["ProfileMessage"]
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h5>Profile Picture</h5>
+
+            <div class="mb-3">
+                <img src="@Url.Action("ProfilePictureImage", "Participant")"
+                     alt="Participant Profile Picture"
+                     class="rounded-circle border"
+                     style="width:150px; height:150px; object-fit:cover;"
+                     onerror="this.style.display='none';" />
+            </div>
+
+            <form asp-controller="Participant"
+                  asp-action="ProfilePicture"
+                  method="post"
+                  enctype="multipart/form-data">
+
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label for="file" class="form-label">
+                        Choose a new profile picture
+                    </label>
+
+                    <input type="file"
+                           id="file"
+                           name="file"
+                           class="form-control"
+                           accept=".jpg,.jpeg,.png,.webp"
+                           required />
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Upload Profile Picture
+                </button>
+
+            </form>
+
+            <hr />
+
+            <h5>Profile Information</h5>
+
+            @if (Model.ValueKind == System.Text.Json.JsonValueKind.Object)
+            {
+                @foreach (var property in Model.EnumerateObject())
+                {
+                    <p>
+                        <strong>@property.Name:</strong>
+                        @property.Value.ToString()
+                    </p>
+                }
+            }
+            else
+            {
+                <p>Profile information could not be loaded.</p>
+            }
+
+        </div>
+    </div>
+
+    <a asp-controller="Participant"
+       asp-action="MyEvents"
+       class="btn btn-secondary mt-3">
+        Back to My Events
+    </a>
+
+</div>

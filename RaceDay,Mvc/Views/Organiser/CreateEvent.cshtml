@@ -1,0 +1,100 @@
+﻿@model RaceDay.Mvc.Models.EventViewModel
+
+<div class="container mt-4">
+    <h2>Create Race Event</h2>
+
+    <div asp-validation-summary="All"
+         class="text-danger mb-3"></div>
+
+    <form asp-action="CreateEvent" method="post">
+
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label">
+                Event Name
+            </label>
+            <input asp-for="Name"
+                   class="form-control"
+                   placeholder="Event name" />
+            <span asp-validation-for="Name"
+                  class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label">
+                Description
+            </label>
+            <textarea asp-for="Description"
+                      class="form-control"
+                      rows="4"
+                      placeholder="Describe your event"></textarea>
+            <span asp-validation-for="Description"
+                  class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="EventDate" class="form-label">
+                Event Date
+            </label>
+            <input asp-for="EventDate"
+                   type="date"
+                   class="form-control" />
+            <span asp-validation-for="EventDate"
+                  class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Location" class="form-label">
+                Location
+            </label>
+            <input asp-for="Location"
+                   class="form-control"
+                   placeholder="Event location" />
+            <span asp-validation-for="Location"
+                  class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Distance" class="form-label">
+                Distance (km)
+            </label>
+            <input asp-for="Distance"
+                   type="number"
+                   step="0.1"
+                   min="0.1"
+                   class="form-control"
+                   placeholder="Distance in kilometres" />
+            <span asp-validation-for="Distance"
+                  class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="EventType" class="form-label">
+                Event Type
+            </label>
+            <select asp-for="EventType" class="form-select">
+                <option value="">Select event type</option>
+                <option value="Running">Running</option>
+                <option value="Walking">Walking</option>
+                <option value="Cycling">Cycling</option>
+            </select>
+            <span asp-validation-for="EventType"
+                  class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-success">
+            Create Event
+        </button>
+
+        <a asp-action="Dashboard"
+           class="btn btn-secondary">
+            Cancel
+        </a>
+
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

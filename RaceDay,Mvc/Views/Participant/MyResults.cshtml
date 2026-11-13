@@ -1,0 +1,51 @@
+﻿@using System.Text.Json
+@{
+    ViewData["Title"] = "My Results";
+
+    var results = Model is JsonElement element
+        ? element
+        : default;
+
+    bool hasResults =
+        results.ValueKind == JsonValueKind.Array &&
+        results.GetArrayLength() > 0;
+}
+
+<div class="container mt-4">
+    <h2>My Results</h2>
+    <hr />
+
+    @if (hasResults)
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Result Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var result in results.EnumerateArray())
+                    {
+                        <tr>
+                            <td>
+                                <pre>@JsonSerializer.Serialize(
+                                                                                result,
+                                                                                new JsonSerializerOptions
+                                                                                {
+                                                                                        WriteIndented = true
+                                                                                })</pre>
+                    </td>
+                </tr>
+                                }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            No results are available yet.
+        </div>
+    }
+</div>

@@ -1,0 +1,108 @@
+﻿@model RaceDay.Mvc.Models.RegisterViewModel
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow p-4">
+                <h2 class="mb-4">Register for RaceDay</h2>
+
+                <div asp-validation-summary="All"
+                     class="text-danger mb-3"></div>
+
+                <form asp-action="Register" method="post">
+
+                    <label asp-for="FirstName" class="form-label">First Name</label>
+                    <input asp-for="FirstName"
+                           class="form-control mb-3"
+                           placeholder="Enter your first name" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+
+                    <label asp-for="LastName" class="form-label">Last Name</label>
+                    <input asp-for="LastName"
+                           class="form-control mb-3"
+                           placeholder="Enter your last name" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+
+                    <label asp-for="Email" class="form-label">Email</label>
+                    <input asp-for="Email"
+                           class="form-control mb-3"
+                           placeholder="Enter your email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+
+                    <label asp-for="Password" class="form-label">Password</label>
+                    <input asp-for="Password"
+                           class="form-control mb-3"
+                           placeholder="Minimum 8 characters" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+
+                    <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                    <input asp-for="ConfirmPassword"
+                           class="form-control mb-3"
+                           placeholder="Confirm your password" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+
+                    <label asp-for="Role" class="form-label">Account Type</label>
+                    <select asp-for="Role"
+                            id="roleSelect"
+                            class="form-select mb-3">
+                        <option value="Participant">Participant</option>
+                        <option value="Organiser">Organiser</option>
+                    </select>
+
+                    <div id="participantFields">
+                        <h5>Participant Details</h5>
+
+                        <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
+                        <input asp-for="DateOfBirth"
+                               type="date"
+                               class="form-control mb-3" />
+                        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+
+                        <label asp-for="EmergencyContact" class="form-label">Emergency Contact (Optional)</label>
+                        <input asp-for="EmergencyContact"
+                               class="form-control mb-3"
+                               placeholder="Enter emergency contact number" />
+                    </div>
+
+                    <div id="organiserFields">
+                        <h5>Organisation Details</h5>
+
+                        <label asp-for="OrganisationName" class="form-label">Organisation Name</label>
+                        <input asp-for="OrganisationName"
+                               class="form-control mb-3"
+                               placeholder="Enter organisation name" />
+                        <span asp-validation-for="OrganisationName" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 mt-3">
+                        Register
+                    </button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const roleSelect = document.getElementById("roleSelect");
+        const participantFields = document.getElementById("participantFields");
+        const organiserFields = document.getElementById("organiserFields");
+
+        function updateRoleFields() {
+            if (roleSelect.value === "Participant") {
+                participantFields.style.display = "block";
+                organiserFields.style.display = "none";
+            } else {
+                participantFields.style.display = "none";
+                organiserFields.style.display = "block";
+            }
+        }
+
+        roleSelect.addEventListener("change", updateRoleFields);
+        updateRoleFields();
+    </script>
+}

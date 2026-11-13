@@ -1,4 +1,5 @@
 
+using RaceDay.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +41,8 @@ if (string.IsNullOrWhiteSpace(jwtKey) ||
 
 builder.Services.AddDbContext<RaceDayContext>(options =>
     options.UseSqlServer(connectionString));
+
+builder.Services.AddSingleton<AzureBlobStorageService>();
 
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
@@ -640,7 +643,6 @@ app.MapDelete("/api/events/{id:int}", async (
 
 // ---------------- CATEGORIES ----------------
 
-
 app.MapPost("/api/categories", async (
     CategoryCreateRequest request,
     ClaimsPrincipal principal,
@@ -679,7 +681,6 @@ app.MapPost("/api/categories", async (
             category.DistanceKm));
 })
 .RequireAuthorization(policy => policy.RequireRole("Organiser"));
-
 
 app.MapGet("/api/categories", async (RaceDayContext db) =>
     Results.Ok(await db.Categories.AsNoTracking()
@@ -1205,6 +1206,172 @@ app.MapGet("/api/events/{eventId:int}/results", async (
 })
 .RequireAuthorization(policy => policy.RequireRole("Organiser"));
 
+// ---------------- AZURE IMAGE UPLOADS ----------------
+
+// Upload an event banner: event owner (organiser) only.
+app.MapPost("/api/events/{id:int}/banner", async (
+    int id,
+    IFormFile file,
+    ClaimsPrincipal principal,
+    RaceDayContext db,
+    AzureBlobStorageService storage) =>
+{
+    var userId = GetUserId(principal);
+
+    if (userId is null)
+        return Results.Unauthorized();
+
+    var item = await db.Events
+        .SingleOrDefaultAsync(e => e.EventId == id);
+
+    if (item is null)
+        return Results.NotFound();
+
+    if (item.OrganiserId != userId.Value)
+        return Results.Forbid();
+
+    try
+    {
+        var newBlobName =
+            await storage.UploadImageAsync(file, "events");
+
+        var oldBlobName = item.EventBannerUrl;
+
+        item.EventBannerUrl = newBlobName;
+
+        await db.SaveChangesAsync();
+
+        if (!string.IsNullOrWhiteSpace(oldBlobName))
+        {
+            await storage.DeleteImageAsync(oldBlobName);
+        }
+
+        return Results.Ok(new
+        {
+            Message = "Event banner uploaded successfully.",
+            item.EventId,
+            ImageEndpoint = $"/api/events/{id}/banner"
+        });
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(new { Message = ex.Message });
+    }
+})
+.RequireAuthorization(policy => policy.RequireRole("Organiser"))
+.DisableAntiforgery();
+
+
+// Upload your own profile picture.
+app.MapPost("/api/users/me/profile-picture", async (
+    IFormFile file,
+    ClaimsPrincipal principal,
+    RaceDayContext db,
+    AzureBlobStorageService storage) =>
+{
+    var userId = GetUserId(principal);
+
+    if (userId is null)
+        return Results.Unauthorized();
+
+    var user = await db.Users.FindAsync(userId.Value);
+
+    if (user is null)
+        return Results.NotFound();
+
+    try
+    {
+        var newBlobName =
+            await storage.UploadImageAsync(file, "profiles");
+
+        var oldBlobName = user.ProfilePictureUrl;
+
+        user.ProfilePictureUrl = newBlobName;
+
+        await db.SaveChangesAsync();
+
+        if (!string.IsNullOrWhiteSpace(oldBlobName))
+        {
+            await storage.DeleteImageAsync(oldBlobName);
+        }
+
+        return Results.Ok(new
+        {
+            Message = "Profile picture uploaded successfully.",
+            ImageEndpoint = "/api/users/me/profile-picture"
+        });
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(new { Message = ex.Message });
+    }
+})
+.RequireAuthorization()
+.DisableAntiforgery();
+
+
+// Retrieve an event banner.
+app.MapGet("/api/events/{id:int}/banner", async (
+    int id,
+    RaceDayContext db,
+    AzureBlobStorageService storage) =>
+{
+    var item = await db.Events
+        .AsNoTracking()
+        .SingleOrDefaultAsync(e => e.EventId == id);
+
+    if (item is null)
+        return Results.NotFound();
+
+    if (string.IsNullOrWhiteSpace(item.EventBannerUrl))
+        return Results.NotFound();
+
+    var image =
+        await storage.DownloadImageAsync(item.EventBannerUrl);
+
+    if (image is null)
+        return Results.NotFound();
+
+    return Results.File(
+        image.Value.Content,
+        image.Value.ContentType);
+})
+.AllowAnonymous();
+
+
+// Retrieve your own profile picture.
+app.MapGet("/api/users/me/profile-picture", async (
+    ClaimsPrincipal principal,
+    RaceDayContext db,
+    AzureBlobStorageService storage) =>
+{
+    var userId = GetUserId(principal);
+
+    if (userId is null)
+        return Results.Unauthorized();
+
+    var user = await db.Users
+        .AsNoTracking()
+        .SingleOrDefaultAsync(u => u.UserId == userId.Value);
+
+    if (user is null)
+        return Results.NotFound();
+
+    if (string.IsNullOrWhiteSpace(user.ProfilePictureUrl))
+        return Results.NotFound();
+
+    var image =
+        await storage.DownloadImageAsync(user.ProfilePictureUrl);
+
+    if (image is null)
+        return Results.NotFound();
+
+    return Results.File(
+        image.Value.Content,
+        image.Value.ContentType);
+})
+.RequireAuthorization();
+
 app.Run();
 
 // ---------------- HELPER ----------------
@@ -1315,7 +1482,6 @@ public sealed record ResultCreateRequest(
     int EnrolmentId,
     TimeOnly? FinishTime,
     int? Position);
-
 
 public record CategoryCreateRequest(
     string CategoryName,

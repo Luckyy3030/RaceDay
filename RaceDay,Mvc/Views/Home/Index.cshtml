@@ -1,0 +1,162 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="container-fluid px-0">
+
+    <!-- Hero Section -->
+    <section class="bg-dark text-white text-center py-5 rounded-3">
+        <div class="container py-5">
+
+            <h1 class="display-3 fw-bold">
+                Welcome to RaceDay
+            </h1>
+
+            <p class="lead mt-3">
+                Your journey starts here. Discover sporting events,
+                connect with organisers and track your race results.
+            </p>
+
+            <div class="mt-4">
+                <a asp-controller="Account"
+                   asp-action="Register"
+                   class="btn btn-primary btn-lg me-2">
+                    Get Started
+                </a>
+
+                <a asp-controller="Account"
+                   asp-action="Login"
+                   class="btn btn-outline-light btn-lg">
+                    Login
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="container py-5">
+
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Discover RaceDay</h2>
+
+            <p class="text-muted">
+                Everything you need to participate in and organise
+                sporting events.
+            </p>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- Events -->
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body text-center p-4">
+
+                        <h4 class="fw-bold mb-3">
+                            Discover Events
+                        </h4>
+
+                        <p>
+                            Browse upcoming running, walking and
+                            cycling events and find activities
+                            that interest you.
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Organisers -->
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body text-center p-4">
+
+                        <h4 class="fw-bold mb-3">
+                            Organise Events
+                        </h4>
+
+                        <p>
+                            Create and manage sporting events,
+                            organise categories and monitor
+                            participant enrolments.
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body text-center p-4">
+
+                        <h4 class="fw-bold mb-3">
+                            Track Results
+                        </h4>
+
+                        <p>
+                            Keep track of your event participation,
+                            finishing times and race positions.
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- How It Works -->
+    <section class="bg-light py-5">
+
+        <div class="container text-center">
+
+            <h2 class="fw-bold mb-4">
+                How RaceDay Works
+            </h2>
+
+            <div class="row g-4">
+
+                <div class="col-md-4">
+                    <h5 class="fw-bold">1. Register</h5>
+                    <p>Create an account as an organiser or participant.</p>
+                </div>
+
+                <div class="col-md-4">
+                    <h5 class="fw-bold">2. Get Involved</h5>
+                    <p>Discover events or create your own sporting event.</p>
+                </div>
+
+                <div class="col-md-4">
+                    <h5 class="fw-bold">3. Track Progress</h5>
+                    <p>Manage enrolments and view your race results.</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Footer Call to Action -->
+    <section class="container text-center py-5">
+
+        <h2 class="fw-bold">
+            Ready to Get Started?
+        </h2>
+
+        <p class="text-muted">
+            Join RaceDay and become part of the sporting community.
+        </p>
+
+        <a asp-controller="Account"
+           asp-action="Register"
+           class="btn btn-primary btn-lg mt-2">
+            Create Your Account
+        </a>
+
+    </section>
+
+</div>

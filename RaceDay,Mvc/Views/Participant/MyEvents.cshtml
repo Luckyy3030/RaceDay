@@ -1,0 +1,53 @@
+﻿@model object
+
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "My Events";
+
+    var eventsJson = Model == null
+        ? "No enrolments found."
+        : JsonSerializer.Serialize(
+            Model,
+            new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+}
+
+<div class="container mt-4">
+    <h1>My Events</h1>
+
+    <p class="text-muted">
+        View your event enrolments and participation information.
+    </p>
+
+    @if (Model == null)
+    {
+        <div class="alert alert-info">
+            You have no event enrolments available.
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Enrolment Information</h5>
+                <pre class="mt-3">@eventsJson</pre>
+            </div>
+        </div>
+    }
+
+    <div class="mt-3">
+        <a asp-action="MyResults"
+           class="btn btn-primary">
+            View My Results
+        </a>
+
+        <a asp-action="Profile"
+           class="btn btn-secondary">
+            My Profile
+        </a>
+    </div>
+</div>
+

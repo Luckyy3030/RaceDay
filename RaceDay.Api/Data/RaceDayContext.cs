@@ -68,6 +68,7 @@ public partial class RaceDayContext : DbContext
             entity.Property(e => e.EventName).HasMaxLength(200);
             entity.Property(e => e.EventType).HasMaxLength(20);
             entity.Property(e => e.Location).HasMaxLength(200);
+            entity.Property(e => e.EventBannerUrl).HasMaxLength(500);
 
             entity.HasOne(d => d.Organiser).WithMany(p => p.Events)
                 .HasForeignKey(d => d.OrganiserId)
@@ -161,6 +162,7 @@ public partial class RaceDayContext : DbContext
             entity.Property(e => e.LastName).HasMaxLength(100);
             entity.Property(e => e.PasswordHash).HasMaxLength(255);
             entity.Property(e => e.Role).HasMaxLength(20);
+            entity.Property(e => e.ProfilePictureUrl).HasMaxLength(500);
         });
 
         OnModelCreatingPartial(modelBuilder);

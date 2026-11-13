@@ -15,6 +15,8 @@ public partial class User
 
     public string PasswordHash { get; set; } = null!;
 
+    public string? ProfilePictureUrl { get; set; }
+
     public string Role { get; set; } = null!;
 
     public DateTime CreatedAt { get; set; }

@@ -1,0 +1,44 @@
+﻿@model RaceDay.Mvc.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow p-4">
+                <h2 class="text-center">RaceDay Login</h2>
+
+                <div asp-validation-summary="All"
+                     class="text-danger"></div>
+
+                <form asp-action="Login" method="post">
+                    <div class="mb-3">
+                        <label asp-for="Email"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password"></label>
+                        <input asp-for="Password"
+                               class="form-control" />
+                        <span asp-validation-for="Password"
+                              class="text-danger"></span>
+                    </div>
+
+                    <button class="btn btn-primary w-100">
+                        Login
+                    </button>
+                </form>
+
+                <p class="mt-3 text-center">
+                    Don't have an account?
+                    <a asp-action="Register">Register here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

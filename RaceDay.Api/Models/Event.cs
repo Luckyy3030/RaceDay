@@ -10,6 +10,7 @@ public partial class Event
     public int OrganiserId { get; set; }
 
     public string EventName { get; set; } = null!;
+    public string? EventBannerUrl { get; set; }
 
     public string? Description { get; set; }
 
