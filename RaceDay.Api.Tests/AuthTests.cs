@@ -3,7 +3,6 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace RaceDay.Api.Tests
@@ -79,7 +78,9 @@ namespace RaceDay.Api.Tests
             var registerResponse = await client.PostAsJsonAsync(
                 "/api/auth/register", registration);
 
-            Assert.Equal(HttpStatusCode.Created, registerResponse.StatusCode);
+            Assert.Equal(
+                HttpStatusCode.Created,
+                registerResponse.StatusCode);
 
             var response = await client.PostAsJsonAsync(
                 "/api/auth/login",
@@ -113,7 +114,9 @@ namespace RaceDay.Api.Tests
             var registerResponse = await client.PostAsJsonAsync(
                 "/api/auth/register", registration);
 
-            Assert.Equal(HttpStatusCode.Created, registerResponse.StatusCode);
+            Assert.Equal(
+                HttpStatusCode.Created,
+                registerResponse.StatusCode);
 
             var response = await client.PostAsJsonAsync(
                 "/api/auth/login",
@@ -175,7 +178,9 @@ namespace RaceDay.Api.Tests
                     Password = TestPassword
                 });
 
-            Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
+            Assert.Equal(
+                HttpStatusCode.OK,
+                loginResponse.StatusCode);
 
             var loginJson = await loginResponse.Content
                 .ReadFromJsonAsync<JsonElement>();
@@ -186,10 +191,22 @@ namespace RaceDay.Api.Tests
 
             var token = tokenProperty.GetString();
 
-            Assert.False(string.IsNullOrWhiteSpace(token));
+            Assert.False(
+                string.IsNullOrWhiteSpace(token),
+                "Login did not return a JWT token.");
 
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", token);
+
+            var profileResponse = await client.GetAsync("/api/users/me");
+
+            Assert.True(
+                profileResponse.IsSuccessStatusCode,
+                $"Profile request failed with status " +
+                $"{(int)profileResponse.StatusCode} " +
+                $"({profileResponse.StatusCode}). " +
+                $"Authentication details: " +
+                $"{string.Join("; ", profileResponse.Headers.WwwAuthenticate)}");
 
             var eventRequest = new
             {
@@ -212,4 +229,3 @@ namespace RaceDay.Api.Tests
         }
     }
 }
-

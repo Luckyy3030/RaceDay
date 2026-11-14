@@ -11,6 +11,11 @@ jobs:
   build-and-test:
     runs-on: windows-latest
 
+    env:
+      Jwt__Key: "ThisIsATestJwtSecretKeyWithAtLeast32Bytes!"
+      Jwt__Issuer: "RaceDay.Api"
+      Jwt__Audience: "RaceDay.Client"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -28,7 +33,4 @@ jobs:
 
       - name: Run unit tests
         run: dotnet test RaceDay.sln --no-build --configuration Release
-        env:
-          Jwt__Key: ThisIsATestJwtSecretKeyWithAtLeast32Bytes!
-          Jwt__Issuer: RaceDay.Api
-          Jwt__Audience: RaceDay.Client
+

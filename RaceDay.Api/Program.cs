@@ -1,4 +1,3 @@
-
 using RaceDay.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -52,6 +51,10 @@ builder.Services.AddAuthentication(
     JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        // Keep JWT claim names exactly as issued (sub, email, role).
+        options.MapInboundClaims = false;
+        options.IncludeErrorDetails = true;
+
         options.TokenValidationParameters =
             new TokenValidationParameters
             {
@@ -70,8 +73,8 @@ builder.Services.AddAuthentication(
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.FromMinutes(1),
 
-                NameClaimType = ClaimTypes.NameIdentifier,
-                RoleClaimType = ClaimTypes.Role
+                NameClaimType = "sub",
+                RoleClaimType = "role"
             };
     });
 
@@ -296,16 +299,15 @@ app.MapPost("/api/auth/login", async (
 
     if (verification == PasswordVerificationResult.Failed)
         return Results.Unauthorized();
-
-    var key = configuration["Jwt:Key"]!;
+    var key = jwtKey;
     var issuer = configuration["Jwt:Issuer"] ?? "RaceDay.Api";
     var audience = configuration["Jwt:Audience"] ?? "RaceDay.Client";
 
     var claims = new List<Claim>
     {
-        new(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-        new(ClaimTypes.Name, user.Email),
-        new(ClaimTypes.Role, user.Role)
+        new("sub", user.UserId.ToString()),
+        new("email", user.Email),
+        new("role", user.Role)
     };
 
     var credentials = new SigningCredentials(
@@ -1378,7 +1380,7 @@ app.Run();
 
 static int? GetUserId(ClaimsPrincipal principal)
 {
-    var value = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+    var value = principal.FindFirstValue("sub");
 
     return int.TryParse(value, out var id) ? id : null;
 }
