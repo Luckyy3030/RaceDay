@@ -28,3 +28,7 @@ jobs:
 
       - name: Run unit tests
         run: dotnet test RaceDay.sln --no-build --configuration Release
+        env:
+          Jwt__Key: ThisIsATestJwtSecretKeyWithAtLeast32Bytes!
+          Jwt__Issuer: RaceDay.Api
+          Jwt__Audience: RaceDay.Client
